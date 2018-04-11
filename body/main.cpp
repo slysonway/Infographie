@@ -39,7 +39,10 @@ void drawChin();
 
 
 
-float angle = 0.0;
+float angle = 0.0f; //angle bras
+float angle2 = 0.0f;//angle avant bras
+
+float angleT = 0.0f; //angle tête
 float lightAngle = 0.0f;
 float cameraAngle = 10.0;
 //float X0 = 1;
@@ -191,7 +194,7 @@ void display(){
     glPushMatrix();
     glRotated(lightAngle, 0.0f, 1.0f, 0.0f);
     glTranslated(0.0f, 0.0f, -3.0f);
-    glutWireCube(0.2);
+    glutWireCube(0.2f);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);        // lumiËre diffuse
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
     glPopMatrix();
@@ -203,16 +206,30 @@ void display(){
     
     //right arm
     glPushMatrix();
+    glTranslatef(0.0f, 3.0f, 0.0f);
+    glRotatef(angle, -1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, -3.0f, 0.0f);
     glTranslated(2.5f, 1.5f, 0.0f);
     drawQuads(3.0f, 1.0f, 1.0f);
+    //avant bras
+    glTranslatef(0.0f, -1.5f, 0.0f);
+    glRotatef(angle2, -1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, 1.5f, 0.0f);
     glTranslated(0.0f, -2.75f, 0.0f);
     drawQuads(2.5f, 1.0f, 1.0f);
     glPopMatrix();
     
     //left arm
     glPushMatrix();
+    glTranslatef(0.0f, 3.0f, 0.0f);
+    glRotatef(angle, -1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, -3.0f, 0.0f);
     glTranslated(-2.5f, 1.5f, 0.0f);
     drawQuads(3.0f, 1.0f, 1.0f);
+    //avant bras
+    glTranslatef(0.0f, -1.5f, 0.0f);
+    glRotatef(angle2, -1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, 1.5f, 0.0f);
     glTranslated(0.0f, -2.75f, 0.0f);
     drawQuads(2.5f, 1.0f, 1.0f);
     glPopMatrix();
@@ -235,24 +252,32 @@ void display(){
     glPopMatrix();
     
     
-    //head
+    /*-----HEAD-------*/
     glPushMatrix();
+    
+    glRotatef(angleT, 0.0f, 1.0f, 0.0f);
+    
     glTranslatef(0.0f, 5.0f, 0.5f);
     drawQuads(2.0f, 2.0f, 2.0f);
+    
     //nose
     glTranslatef(0.0f, 0.0f, 1.05f);
     drawQuads(0.25f, 0.10f, 0.1f);
     glTranslatef(0.0f, -0.2f, 0.0f);
     drawQuads(0.1f, 0.25f, 0.1f);
+    
     //hear
     glTranslatef(1.1f, 0.1f, -1.0f);
     drawQuads(0.5f, 0.25f, 0.1);
     glTranslatef(-2.2f, 0.0f, 0.0f);
     drawQuads(0.5f, 0.25f, 0.1);
+    
+    //Chin
     glTranslatef(1.1f, -1.9f, -0.05f);
     drawChin();
     glTranslatef(0.0f, -0.25, 1.0f);
     drawQuads(0.5f, 1.0f, 1.0f);
+    
     //neck
     glTranslatef(0.0f, 1.25f, -1.5f);
     glRotatef(90.0f, 0.0f, 0.0f, 0.0f);
@@ -492,6 +517,13 @@ void update(int value) {
         lightAngle -= 360;
     }
     
+//    angle += 1;
+//
+//    if (angle > 180){
+//        angle -= 180;
+//    }
+    
+    
     glutPostRedisplay();
     glutTimerFunc(1, update, 0);
 }
@@ -565,12 +597,12 @@ void keyboard(unsigned char key,       // Touche qui a ÈtÈ pressÈe
             break;
             
         case '+':
-            R -= 0.1;
+            R -= 1.0f;
             moveCam();
             break;
         
         case '-':
-            R += 0.1;
+            R += 1.0f;
             moveCam();
             break;
         
@@ -584,9 +616,42 @@ void keyboard(unsigned char key,       // Touche qui a ÈtÈ pressÈe
             glDisable(GL_LIGHTING);
             glutPostRedisplay();
             break;
+        
+            //move bras
+        case 'm':
+            angle2 += 1.0f;
+            if (angle2 > 150) {
+                angle2 -= 150;
+            }
+            
+            angle += 1.0f;
+            if (angle > 150) {
+                angle -= 150;
+            }
+            break;
+            
+            //reset bras
+        case 'M':
+            angle = 0.0f;
+            angle2 = 0.0f;
+            break;
+            
+            //move tête
+        case 't':
+            angleT += 1.0f;
+            if (angleT > 360) {
+                angleT -= 360;
+            }
+            break;
+            
+            //reset tête
+        case 'T':
+            angleT = 0.0f;
+            break;
             
         case 'x':/* Quitter le programme */
             exit(0);
+            break;
     }
 }
 
