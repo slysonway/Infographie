@@ -40,6 +40,7 @@ void drawChin();
 
 
 float angle = 0.0;
+float lightAngle = 0.0f;
 float cameraAngle = 10.0;
 //float X0 = 1;
 float R = 15;
@@ -80,6 +81,7 @@ int main(int argc,       // argc: nombre d'arguments, argc vaut au moins 1
      => initialisation des fonctions callback appelÈes par glut */
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
+    glutTimerFunc (20,update, 0);
     glutKeyboardFunc(keyboard);
     
     //glutTimerFunc(20, update, 0);
@@ -107,6 +109,9 @@ void initRendering() {
     /* dÈfinit la couleur d'effacement et la couleur de fond */
     glClearColor(0.0, 0.0, 0.0, 0.0);
     
+    glEnable(GL_NORMALIZE);
+    
+    glShadeModel(GL_SMOOTH);
     /*  dÈfinit la taille d'un pixel*/
     glPointSize(2.0);
     
@@ -129,6 +134,14 @@ void display(){
     /* Permet de crÈer un point de vue. DÈfinit une matrice de modÈlisation-visualisation et la multiplie
      ‡ droite de lma matrice active, ici l'identitÈ*/
     //glRotatef(cameraAngle, 0.1, -0.1, 1.0);
+    
+    GLfloat ambientColor[] = {0.2f, 0.2f, 0.2f, 1.0f};   // Color (0.2, 0.2, 0.2)
+
+    
+    // Ajout lumiËre positionnelle L0
+    GLfloat lightColor0[] = {1.0f, 1.0f, 1.0f, 1.0f};    // Color (0.5, 0.5, 0.5)
+    GLfloat lightPos0[] = {-3.0f, 0.0f, 0.0f, 1.0f};      // Positioned at (4, 0, 8)
+    
     gluLookAt(x0, Y0, z0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);     // vecteur d'orientation camÈra
     //glRotatef(-cameraAngle, 0.1, -0.1, 1.0);
     //glTranslatef(0.0f, 0.0f, -5.0f);
@@ -169,6 +182,21 @@ void display(){
 //    drawTrunk();
     
     //bras();
+    // Ajout lumiËre ambiante
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
+    
+    
+    
+    //cube file fer qui tourne lumiere
+    glPushMatrix();
+    glRotated(lightAngle, 0.0f, 1.0f, 0.0f);
+    glTranslated(0.0f, 0.0f, -3.0f);
+    glutWireCube(0.2);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);        // lumiËre diffuse
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+    glPopMatrix();
+    
+       // position
     
     //body
     drawQuads(6.0f, 4.0f, 1.0f);
@@ -188,7 +216,7 @@ void display(){
     glTranslated(0.0f, -2.75f, 0.0f);
     drawQuads(2.5f, 1.0f, 1.0f);
     glPopMatrix();
-    
+
     
     //right leg
     glPushMatrix();
@@ -205,6 +233,7 @@ void display(){
     glTranslated(0.0f, -3.0f, 0.0f);
     drawQuads(3.0f, 1.8f, 1.0f);
     glPopMatrix();
+    
     
     //head
     glPushMatrix();
@@ -224,7 +253,12 @@ void display(){
     drawChin();
     glTranslatef(0.0f, -0.25, 1.0f);
     drawQuads(0.5f, 1.0f, 1.0f);
+    //neck
+    glTranslatef(0.0f, 1.25f, -1.5f);
+    glRotatef(90.0f, 0.0f, 0.0f, 0.0f);
+    gluCylinder(gluNewQuadric(), 0.5f, 0.5f, 1.0f, 10.0f, 10.0f);
     glPopMatrix();
+    
     
     
     
@@ -279,44 +313,51 @@ void drawQuads(float height, float width, float thickness) {
     
     glPushMatrix();
     glBegin(GL_QUADS);
+    glColor3f(1.0f, 1.0f, 0.0f);
     
     //front
-    glColor3f(1.0f, 0.0f, 0.0f);
+    //glColor3f(1.0f, 0.0f, 0.0f);
+    glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(width / 2.0f, height / 2.0f, thickness / 2.0f);
     glVertex3f(width / 2.0f, -height / 2.0f, thickness / 2.0f);
     glVertex3f(-width / 2.0f, -height / 2.0f, thickness / 2.0f);
     glVertex3f(-width / 2.0f, height / 2.0f, thickness / 2.0f);
     
     //back
-    glColor3f(0.0f, 1.0f, 0.0f);
+    //glColor3f(0.0f, 1.0f, 0.0f);
+    glNormal3f(0.0f, 0.0f, -1.0f);
     glVertex3f(width / 2.0f, height / 2.0f, -thickness / 2.0f);
     glVertex3f(width / 2.0f, -height / 2.0f, -thickness / 2.0f);
     glVertex3f(-width / 2.0f, -height / 2.0f, -thickness / 2.0f);
     glVertex3f(-width / 2.0f, height / 2.0f, -thickness / 2.0f);
     
     //right
-    glColor3f(0.0f, 0.0f, 1.0f);
+    //glColor3f(0.0f, 0.0f, 1.0f);
+    glNormal3f(1.0f, 0.0f, 0.0f);
     glVertex3f(width / 2.0f, height / 2.0f, thickness / 2.0f);
     glVertex3f(width / 2.0f, height / 2.0f, -thickness / 2.0f);
     glVertex3f(width / 2.0f, -height / 2.0f, -thickness / 2.0f);
     glVertex3f(width / 2.0f, -height / 2.0f, thickness / 2.0f);
     
     //left
-    glColor3f(1.0f, 1.0f, 0.0f);
+    //glColor3f(1.0f, 1.0f, 0.0f);
+    glNormal3f(-1.0f, 0.0f, 0.0f);
     glVertex3f(-width / 2.0f, height / 2.0f, thickness / 2.0f);
     glVertex3f(-width / 2.0f, height / 2.0f, -thickness / 2.0f);
     glVertex3f(-width / 2.0f, -height / 2.0f, -thickness / 2.0f);
     glVertex3f(-width / 2.0f, -height / 2.0f, thickness / 2.0f);
     
     //top
-    glColor3f(0.0f, 1.0f, 1.0f);
+    //glColor3f(0.0f, 1.0f, 1.0f);
+    glNormal3f(0.0f, 1.0f, 0.0f);
     glVertex3f(width / 2.0f, height / 2.0f, thickness / 2.0f);
     glVertex3f(width / 2.0f, height / 2.0f, -thickness / 2.0f);
     glVertex3f(-width / 2.0f, height / 2.0f, -thickness / 2.0f);
     glVertex3f(-width / 2.0f, height / 2.0f, thickness / 2.0f);
     
     //bot
-    glColor3f(1.0f, 0.0f, 1.0f);
+    //glColor3f(1.0f, 0.0f, 1.0f);
+    glNormal3f(0.0f, -1.0f, 0.0f);
     glVertex3f(width / 2.0f, -height / 2.0f, thickness / 2.0f);
     glVertex3f(width / 2.0f, -height / 2.0f, -thickness / 2.0f);
     glVertex3f(-width / 2.0f, -height / 2.0f, -thickness / 2.0f);
@@ -331,35 +372,40 @@ void drawChin(){
     glPushMatrix();
     glBegin(GL_QUADS);
     //front
-    glColor3f(1.0f, 0.0f, 0.0f);
+    //glColor3f(1.0f, 0.0f, 0.0f);
+    glNormal3f(0.0f, 0.0f, 1.0f);
     glVertex3f(1.0f, 1.0f, 1.0f);
     glVertex3f(0.5f, 0.0f, 1.0f);
     glVertex3f(-0.5f, 0.0f, 1.0f);
     glVertex3f(-1.0f, 1.0f, 1.0f);
     
     //back
-    glColor3f(0.0f, 1.0f, 0.0f);
+    //glColor3f(0.0f, 1.0f, 0.0f);
+    glNormal3f(0.0f, 0.0f, -1.0f);
     glVertex3f(1.0f, 1.0f, 0.5f);
     glVertex3f(0.5f, 0.0f, 0.5f);
     glVertex3f(-0.5f, 0.0f, 0.5f);
     glVertex3f(-1.0f, 1.0f, 0.5f);
     
     //right
-    glColor3f(0.0f, 0.0f, 1.0f);
+    //glColor3f(0.0f, 0.0f, 1.0f);
+    glNormal3f(1.0f, 0.0f, 0.0f);
     glVertex3f(1.0f, 1.0f, 1.0f);
     glVertex3f(1.0f, 1.0f, 0.5f);
     glVertex3f(0.5f, 0.0f, 0.5f);
     glVertex3f(0.5f, 0.0f, 1.0f);
     
     //left
-    glColor3f(1.0f, 1.0f, 0.0f);
+    //glColor3f(1.0f, 1.0f, 0.0f);
+    glNormal3f(-1, 0, 0);
     glVertex3f(-1.0f, 1.0f, 1.0f);
     glVertex3f(-1.0f, 1.0f, 0.5f);
     glVertex3f(-0.5f, 0.0f, 0.5f);
     glVertex3f(-0.5f, 0.0f, 1.0f);
     
     //bot
-    glColor3f(1.0f, 0.0f, 1.0f);
+    //glColor3f(1.0f, 0.0f, 1.0f);
+    glNormal3f(0.0f, -1.0f, 0.0f);
     glVertex3f(0.5f, 0.0f, 1.0f);
     glVertex3f(0.5f, 0.0f, 0.5f);
     glVertex3f(-0.5f, 0.0f, 0.5f);
@@ -433,13 +479,18 @@ void drawPentagone() {
 }
 
 void update(int value) {
-    angle += 1;
-    if(angle > 360.0)
-        angle = 0;
+//    angle += 1;
+//    if(angle > 360.0)
+//        angle = 0;
+//
+//    cameraAngle += 1;
+//    if (cameraAngle > 360)
+//        cameraAngle = 0;
     
-    cameraAngle += 1;
-    if (cameraAngle > 360)
-        cameraAngle = 0;
+    lightAngle += 1;
+    if (lightAngle > 360){
+        lightAngle -= 360;
+    }
     
     glutPostRedisplay();
     glutTimerFunc(1, update, 0);
@@ -518,9 +569,20 @@ void keyboard(unsigned char key,       // Touche qui a ÈtÈ pressÈe
             moveCam();
             break;
         
-            case '-':
+        case '-':
             R += 0.1;
             moveCam();
+            break;
+        
+        case 'l':
+            glEnable(GL_LIGHTING);
+            glEnable(GL_LIGHT0);
+            glutPostRedisplay();
+            break;
+        
+        case 'L':
+            glDisable(GL_LIGHTING);
+            glutPostRedisplay();
             break;
             
         case 'x':/* Quitter le programme */
