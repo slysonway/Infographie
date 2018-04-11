@@ -24,14 +24,8 @@
 #include <stdio.h>
 #include <math.h>
 
-void drawTrapeze(void);
-void drawTriangle(void);
-void drawPentagone(void);
+
 void update(int value);
-void drawArms(void);
-void bras(void);
-void drawForearm(void);
-void drawTrunk(void);
 
 void drawQuads(float height, float width, float thickness);
 void drawChin();
@@ -43,6 +37,8 @@ float angle = 0.0f; //angle bras
 float angle2 = 0.0f;//angle avant bras
 
 float angleT = 0.0f; //angle tête
+float angleJ = 0.0f; //angle jambes
+float angleJ2 = 0.0f; //angle bas jambes
 float lightAngle = 0.0f;
 float cameraAngle = 10.0;
 //float X0 = 1;
@@ -146,45 +142,7 @@ void display(){
     GLfloat lightPos0[] = {-3.0f, 0.0f, 0.0f, 1.0f};      // Positioned at (4, 0, 8)
     
     gluLookAt(x0, Y0, z0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);     // vecteur d'orientation camÈra
-    //glRotatef(-cameraAngle, 0.1, -0.1, 1.0);
-    //glTranslatef(0.0f, 0.0f, -5.0f);
-    
-    //right
-//    glPushMatrix();
-//    glTranslatef(2.0f, 0.0f, 0.0f);
-//    glPushMatrix();
-//    glRotatef(90, 0.0f, 1.0f, 0.0f);
-//    drawArms();
-//    glPopMatrix();
-//    glPushMatrix();
-//    glTranslatef(2.5f, 0.0f, 0.0f);
-//    glRotatef(90, 0.0f, 1.0f, 0.0f);
-//    drawForearm();
-//    glPopMatrix();
-//    glPopMatrix();
-//
-//
-//
-//    //left
-//    glPushMatrix();
-//    glTranslatef(-2.0f, 0.0f, 0.0f);
-//    glPushMatrix();
-//    glRotatef(-90, 0.0f, 1.0f, 0.0f);
-//    drawArms();
-//    glPopMatrix();
-//
-//    glPushMatrix();
-//    glTranslatef(-2.5f, 0.0f, 0.0f);
-//    glRotatef(-90, 0.0f, 1.0f, 0.0f);
-//    drawForearm();
-//    glPopMatrix();
-//    glPopMatrix();
-//
-//    //trunk
-//
-//    drawTrunk();
-    
-    //bras();
+
     // Ajout lumiËre ambiante
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
     
@@ -237,16 +195,31 @@ void display(){
     
     //right leg
     glPushMatrix();
+    glTranslatef(0.0f, -3.0f, 0.0f);
+    glRotatef(angleJ, -1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, 3.0f, 0.0f);
     glTranslated(1.05f, -4.5f, 0.0f);
     drawQuads(3.0f, 1.9f, 1.0f);
+    
+    //bas jambe
+    glTranslatef(0.0f, -1.5f, 0.0f);
+    glRotatef(angleJ2, 1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, 1.5f, 0.0f);
     glTranslated(0.0f, -3.0f, 0.0f);
     drawQuads(3.0f, 1.8f, 1.0f);
     glPopMatrix();
     
     //left leg
     glPushMatrix();
+    glTranslatef(0.0f, -3.0f, 0.0f);
+    glRotatef(angleJ, -1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, 3.0f, 0.0f);
     glTranslated(-1.05f, -4.5f, 0.0f);
     drawQuads(3.0f, 1.9f, 1.0f);
+    //bas jambe
+    glTranslatef(0.0f, -1.5f, 0.0f);
+    glRotatef(angleJ2, 1.0f, 0.0f, 0.0f);
+    glTranslatef(0.0f, 1.5f, 0.0f);
     glTranslated(0.0f, -3.0f, 0.0f);
     drawQuads(3.0f, 1.8f, 1.0f);
     glPopMatrix();
@@ -284,44 +257,6 @@ void display(){
     gluCylinder(gluNewQuadric(), 0.5f, 0.5f, 1.0f, 10.0f, 10.0f);
     glPopMatrix();
     
-    
-    
-    
-//
-
-    
-    /* A vous de jouer */
-    
-    
-    
-    
-    
-    //bras();
-    /*glPushMatrix();
-    glTranslatef(0.0, -1.0, 0.0);
-    glRotatef(angle, 0.0, 0.0, 1.0);
-    drawTrapeze();
-    glPopMatrix();
-    
-    glPushMatrix();
-    glTranslatef(-1.0, 1.0, 0.0);
-    glRotatef(angle, 1.0, 2.0, 3.0);
-    drawTriangle();
-    glPopMatrix();
-    
-    glPushMatrix();
-    glTranslatef(1.0, 1.0, 0.0);
-    glRotatef(angle, 0.0, 1.0, 0.0);
-    glScalef(0.7, 0.7, 0.7);
-    drawPentagone();
-    glPopMatrix();*/
-    
-    
-    
-    
-    /* On swap (Èchange) les buffers, c‡d, on fait passer l'image calculÈe et dessinÈe
-     dans le back buffer au buffer qui va l'afficher: le front buffer (en gÈnÈral), c'est le bouble buffering
-     Cela Èvite une image animÈe sacadÈe, si elle Ètait directement tracÈe dans le front buffer*/
     glutSwapBuffers();
     
     /* On force l'affichage */
@@ -441,87 +376,12 @@ void drawChin(){
     glPopMatrix();
 }
 
-void drawForearm() {
-    glPushMatrix();
-    //glTranslatef(2.0f, 0, 0);
-    //glRotated(90, 0.0f, 1.0f, 0.0f);
-    gluCylinder(gluNewQuadric(), 0.4f, 0.3f, 2.0f, 20, 20);
-    glPopMatrix();
-}
-
-void drawTrunk() {
-    glPushMatrix();
-    glRotatef(90, 1.0f, 0.0f, 0.0f);
-    gluCylinder(gluNewQuadric(), 2.0f, 1.0f, 4.0f, 20, 20);
-    glPopMatrix();
-}
-
-void drawLegs() {
-    
-}
-
-void drawTrapeze() {
-    glBegin(GL_QUADS);
-    glColor3f(1.0, 0.0, 0.0);
-    glVertex3f(-0.4, 0.5, 0.0);
-    glColor3f(0.0, 1.0, 0.0);
-    glVertex3f(-0.7, -0.5, 0.0);
-    glColor3f(0.0, 0.0, 1.0);
-    glVertex3f(0.7, -0.5, 0.0);
-    glColor3f(1.0, 1.0, 1.0);
-    glVertex3f(0.4, 0.5, 0.0);
-    glEnd();
-}
-
-void drawTriangle() {
-    glBegin(GL_TRIANGLES);
-    glColor3f(0.0, 1.0, 0.0);
-    glVertex3f(0.5, -0.5, 0.0);
-    glColor3f(0.0, 0.6, 0.0);
-    glVertex3f(-0.5, -0.5, 0.0);
-    glColor3f(1.0, 1.0, 1.0);
-    glVertex3f(0.0, 0.5, 0.0);
-    glEnd();
-}
-
-void drawPentagone() {
-    glBegin(GL_TRIANGLES);
-    glColor3f(1.0, 0.5, 0.0);
-    glVertex3f(-0.5, -0.5, 0.0);
-    glVertex3f(0.5, -0.5, 0.0);
-    glVertex3f(-0.5, 0.0, 0.0);
-    
-    glColor3f(0.0, 1.0, 1.0);
-    glVertex3f(-0.5, 0.0, 0.0);
-    glVertex3f(0.5, -0.5, 0.0);
-    glVertex3f(0.5, 0.0, 0.0);
-    
-    glColor3f(1.0, 0.0, 1.0);
-    glVertex3f(0.5, 0.0, 0.0);
-    glVertex3f(-0.5, 0.0, 0.0);
-    glVertex3f(0.0, 0.5, 0.0);
-    glEnd();
-}
-
-void update(int value) {
-//    angle += 1;
-//    if(angle > 360.0)
-//        angle = 0;
-//
-//    cameraAngle += 1;
-//    if (cameraAngle > 360)
-//        cameraAngle = 0;
+void update(int value) {      cameraAngle = 0;
     
     lightAngle += 1;
     if (lightAngle > 360){
         lightAngle -= 360;
     }
-    
-//    angle += 1;
-//
-//    if (angle > 180){
-//        angle -= 180;
-//    }
     
     
     glutPostRedisplay();
@@ -578,21 +438,33 @@ void keyboard(unsigned char key,       // Touche qui a ÈtÈ pressÈe
             
         case 'd':
             teta += 0.1;
+            if (teta > (2 * M_PI) ) {
+                teta -= (2 * M_PI);
+            }
             moveCam();
             break;
         
         case 'q':
             teta -= 0.1;
+            if (teta < (-2 * M_PI) ) {
+                teta += (2 * M_PI);
+            }
             moveCam();
             break;
         
         case 'z':
             beta += 0.1;
+            if (beta > (2 * M_PI) ) {
+                beta -= (2 * M_PI);
+            }
             moveCam();
             break;
             
         case 's':
             beta -= 0.1;
+            if (beta < (-2 * M_PI) ) {
+                beta += (2 * M_PI);
+            }
             moveCam();
             break;
             
@@ -647,6 +519,32 @@ void keyboard(unsigned char key,       // Touche qui a ÈtÈ pressÈe
             //reset tête
         case 'T':
             angleT = 0.0f;
+            break;
+            
+            //move jambes
+        case 'j':
+            angleJ += 1.0f;
+            if (angleJ > 150) {
+                angleJ -= 150;
+                angleJ2 -= 45;
+            }
+            
+            
+            if (angleJ2 < 45) {
+                angleJ2 += 1.0f;
+            }
+            break;
+        
+            //reset jambes
+        case 'J':
+            angleJ = 0.0f;
+            angleJ2 = 0.0f;
+            break;
+            
+        case 'b':
+            break;
+            
+        case 'B':
             break;
             
         case 'x':/* Quitter le programme */
